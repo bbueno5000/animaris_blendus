@@ -1,24 +1,36 @@
+"""
+    2-Dimensional
+"""
 import bpy
 import random
+
+N_DIVISIONS = 3  # three for A. Blendus-Duo, four for A. Blendus-Tres
+N_SURVIVORS = 4
+POP_SIZE = 10
+
+print("reproduction start")
+
 # set horizon color
-bpy.data.worlds["World"].horizon_color = (0.25, 0.25, 0.25)
+bpy.data.worlds["World"].horizon_color = (0.55, 0.55, 0.55)
 bpy.context.scene.game_settings.physics_gravity = 0
 # construct plane
 bpy.ops.mesh.primitive_plane_add(radius=100,
                                  view_align=False,
                                  enter_editmode=False,
                                  location=(100, 0, 0),
-                                 layers=(True, False, False, False, False, False, False, False, False,
-                                         False, False, False, False, False, False, False, False, False, False, False))
+                                 layers=(True, False, False, False, False, False, False, False,
+                                         False, False, False, False, False, False, False, False,
+                                         False, False, False, False))
+
 matPlane = bpy.data.materials.new(name="Material")
 matPlane.diffuse_color = (0.6, 0.3, 0.3)
 bpy.data.objects["Plane"].data.materials.append(matPlane)
 # add survivors property
 bpy.ops.object.game_property_new(type='INT',name="survivors")
-bpy.context.active_object.game.properties["survivors"].value = 10
+bpy.context.active_object.game.properties["survivors"].value = N_SURVIVORS
 bpy.context.active_object.game.properties["survivors"].show_debug = True
 # add timer property
-bpy.ops.object.game_property_new(type='INT',name='timer')
+bpy.ops.object.game_property_new(type='TIMER',name="timer")
 bpy.context.active_object.game.properties["timer"].show_debug = True
 # access logic bricks
 sensors =  bpy.context.object.game.sensors
@@ -46,51 +58,93 @@ bpy.ops.logic.controller_add(type='LOGIC_AND')
 # set logic bricks
 sensors["Property.001"].evaluation_type = 'PROPLESSTHAN'
 sensors["Property.001"].property = "survivors"
-sensors["Property.001"].value = "5"
+sensors["Property.001"].value = N_SURVIVORS + 1
 controllers["Python.001"].text = bpy.data.texts["genetic_exchange.py"]
 # connect logic bricks
 sensors["Property.001"].link(controllers["Python.001"])
 sensors["Property.001"].link(controllers["And.001"])
 actuators["Game"].link(controllers["And.001"])
+
+bpy.ops.mesh.primitive_plane_add(radius=100,
+                                 view_align=False,
+                                 enter_editmode=False,
+                                 location=(0, 0, 100),
+                                 layers=(True, False, False, False, False, False, False,
+                                         False, False, False, False, False, False, False,
+                                         False, False, False, False, False, False))
+bpy.ops.transform.rotate(value=1.5708,
+                         axis=(0, 1, 0),
+                         constraint_axis=(False, True, False),
+                         constraint_orientation='GLOBAL',
+                         mirror=False,
+                         proportional='DISABLED',
+                         proportional_edit_falloff='SMOOTH',
+                         proportional_size=1)
+
+matPlane = bpy.data.materials.new(name="Material")
+matPlane.diffuse_color = (0.3, 0.6, 0.3)
+bpy.data.objects["Plane.001"].data.materials.append(matPlane)
+
+bpy.ops.mesh.primitive_plane_add(radius=100,
+                                 view_align=False,
+                                 enter_editmode=False,
+                                 location=(100, 100, 100),
+                                 layers=(True, False, False, False, False, False, False,
+                                         False, False, False, False, False, False, False,
+                                         False, False, False, False, False, False))
+bpy.ops.transform.rotate(value=1.5708,
+                         axis=(1, 0, 0),
+                         constraint_axis=(True, False, False),
+                         constraint_orientation='GLOBAL',
+                         mirror=False, proportional='DISABLED',
+                         proportional_edit_falloff='SMOOTH',
+                         proportional_size=1)
+
+matPlane = bpy.data.materials.new(name="Material")
+matPlane.diffuse_color = (0.3, 0.3, 0.6)
+bpy.data.objects["Plane.002"].data.materials.append(matPlane)
+
 # create extra curve to satisfy naming scheme
 bpy.ops.curve.primitive_bezier_circle_add(view_align=False,
                                           enter_editmode=False,
                                           location=(0, 0, 0),
-                                          layers=(True, False, False, False, False, False, False, False,
-                                                  False, False, False, False, False, False, False, False,
-                                                  False, False, False, False))
+                                          layers=(True, False, False, False, False, False, False,
+                                                  False, False, False, False, False, False, False,
+                                                  False, False, False, False, False, False))
 
 bpy.ops.curve.primitive_bezier_curve_add(view_align=False,
                                          enter_editmode=False,
                                          location=(0, 0, -10),
-                                         layers=(True, False, False, False, False, False, False, False,
-                                                 False, False, False, False, False, False, False, False,
-                                                 False, False, False, False))
+                                         layers=(True, False, False, False, False, False, False,
+                                                 False, False, False, False, False, False, False,
+                                                 False, False, False, False, False, False))
 # create object material
 matObject = bpy.data.materials.new(name="Material")
 matObject.diffuse_color = (0.03, 0.03, 0.03)
 # create curves
-for i in range(1, 11):
-    x = random.randrange(-100, 100)
+for i in range(1, (POP_SIZE + 1)):
+    x = random.randrange(0, 200)
     y = random.randrange(-100, 100)
-
     bpy.ops.curve.primitive_bezier_curve_add(radius=15,
                                              view_align=False,
                                              enter_editmode=True,
                                              location=(x, y, 0),
-                                             layers=(True, False, False, False, False, False, False, False,
-                                                     False, False, False, False, False, False, False, False,
-                                                     False, False, False, False))
+                                             layers=(True, False, False, False, False, False, False,
+                                                     False, False, False, False, False, False, False,
+                                                     False, False, False, False, False, False))
 
-    bpy.ops.curve.subdivide()
-    for j in range(0, 3):
+    bpy.ops.curve.subdivide(number_cuts=(N_DIVISIONS - 2))
+
+    file = open(bpy.path.abspath("//" + str(i) + ".txt"), 'r')
+
+    for j in range(0, N_DIVISIONS):
         bpy.ops.object.game_property_new(type='INT',name="geneX" + str(j))
         bpy.ops.object.game_property_new(type='INT',name="geneY" + str(j))
         # set property values
-        x = random.randrange(-20, 20)
-        y = random.randrange(-20, 20)
-        bpy.context.active_object.game.properties['geneX' + str(j)].value = x
-        bpy.context.active_object.game.properties['geneY' + str(j)].value = y
+        x = int(file.readline())
+        y = int(file.readline())
+        bpy.context.active_object.game.properties["geneX" + str(j)].value = x
+        bpy.context.active_object.game.properties["geneY" + str(j)].value = y
         # set coordinate values for bezier points
         bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = True
         bpy.ops.transform.translate(value=(x, y, 0),
@@ -103,13 +157,13 @@ for i in range(1, 11):
 
         bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = False
 
+    file.close()
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.context.active_object.name = "BezierCurve." + str(i)
     bpy.context.object.data.bevel_object = bpy.data.objects["BezierCircle"]
     bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS')
     bpy.ops.object.convert(target='MESH')
     bpy.context.active_object.data.materials.append(matObject)
-    bpy.context.object.active_material.diffuse_color = (0.0122865, 0.174647, 1)
     bpy.context.object.game.physics_type = 'DYNAMIC'
     bpy.context.object.game.use_collision_bounds = True
     bpy.context.object.game.collision_bounds_type = 'CONVEX_HULL'
@@ -146,8 +200,7 @@ for i in range(1, 11):
     bpy.ops.logic.sensor_add(type='ALWAYS')
     bpy.ops.logic.controller_add(type='LOGIC_AND')
     bpy.ops.logic.actuator_add(type='CONSTRAINT')
-    bpy.ops.logic.actuator_add(type='CONSTRAINT')
-    # set logic bricks
+    bpy.ops.logic.actuator_add(type='CONSTRAINT')    # set logic bricks
     actuators["Constraint"].limit = 'LOCX'
     actuators["Constraint"].limit_min = -100
     actuators["Constraint"].limit_max = 100
@@ -158,6 +211,7 @@ for i in range(1, 11):
     sensors["Always"].link(controllers["And.012"])
     actuators["Constraint"].link(controllers["And.012"])
     actuators["Constraint.001"].link(controllers["And.012"])
+    actuators["Constraint.002"].link(controllers["And.012"])
     # add logic bricks
     bpy.ops.logic.sensor_add(type='COLLISION')
     bpy.ops.logic.sensor_add(type='RAY')
@@ -176,3 +230,4 @@ for i in range(1, 11):
 # delete extra curve
 bpy.data.objects["BezierCurve"].select = True
 bpy.ops.object.delete(use_global=False)
+print("reproduction end")

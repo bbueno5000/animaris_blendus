@@ -1,11 +1,15 @@
+"""
+    3-Dimensional
+"""
 import bpy
 import random
 
-N_DIMENSIONS = 2
+N_DIVISIONS = 3  # three for A. Blendus-Duo, four for A. Blendus-Tres
 N_SURVIVORS = 4
 POP_SIZE = 10
 
 print("reproduction start")
+
 # set horizon color
 bpy.data.worlds["World"].horizon_color = (0.55, 0.55, 0.55)
 bpy.context.scene.game_settings.physics_gravity = 0
@@ -14,9 +18,9 @@ bpy.ops.mesh.primitive_plane_add(radius=100,
                                  view_align=False,
                                  enter_editmode=False,
                                  location=(100, 0, 0),
-                                 layers=(True, False, False, False, False, False, False, False,
-                                         False, False, False, False, False, False, False, False,
-                                         False, False, False, False))
+                                 layers=(True, False, False, False, False, False, False,
+                                         False, False, False, False, False, False, False,
+                                         False, False, False, False, False, False))
 
 matPlane = bpy.data.materials.new(name="Material")
 matPlane.diffuse_color = (0.6, 0.3, 0.3)
@@ -76,6 +80,7 @@ bpy.ops.transform.rotate(value=1.5708,
                          proportional='DISABLED',
                          proportional_edit_falloff='SMOOTH',
                          proportional_size=1)
+
 matPlane = bpy.data.materials.new(name="Material")
 matPlane.diffuse_color = (0.3, 0.6, 0.3)
 bpy.data.objects["Plane.001"].data.materials.append(matPlane)
@@ -91,7 +96,8 @@ bpy.ops.transform.rotate(value=1.5708,
                          axis=(1, 0, 0),
                          constraint_axis=(True, False, False),
                          constraint_orientation='GLOBAL',
-                         mirror=False, proportional='DISABLED',
+                         mirror=False,
+                         proportional='DISABLED',
                          proportional_edit_falloff='SMOOTH',
                          proportional_size=1)
 
@@ -128,37 +134,21 @@ for i in range(1, (POP_SIZE + 1)):
                                              layers=(True, False, False, False, False, False, False,
                                                      False, False, False, False, False, False, False,
                                                      False, False, False, False, False, False))
+    bpy.ops.curve.subdivide(number_cuts=(N_DIVISIONS - 2))
 
-    bpy.ops.curve.subdivide()
+    file = open(bpy.path.abspath("//" + str(i) + ".csv"), 'r')
 
-    file = open(bpy.path.abspath("//" + str(i) + ".txt"), 'r')
-
-    for j in range(0, 3):
+    for j in range(0, N_DIVISIONS):
         bpy.ops.object.game_property_new(type='INT',name="geneX" + str(j))
         bpy.ops.object.game_property_new(type='INT',name="geneY" + str(j))
-
-        if N_DIMENSIONS == 3:
-            bpy.ops.object.game_property_new(type='INT',name="geneZ" + str(j))
-
         # set property values
         x = int(file.readline())
         y = int(file.readline())
-
-        if N_DIMENSIONS == 3:
-            z = int(file.readline())
-        else:
-            z = 0
-
         bpy.context.active_object.game.properties["geneX" + str(j)].value = x
         bpy.context.active_object.game.properties["geneY" + str(j)].value = y
-
-        if N_DIMENSIONS == 3:
-             bpy.context.active_object.game.properties["geneZ" + str(j)].value = z
-
         # set coordinate values for bezier points
         bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = True
-
-        bpy.ops.transform.translate(value=(x, y, z),
+        bpy.ops.transform.translate(value=(x, y, 0),
                                     constraint_axis=(True, True, False),
                                     constraint_orientation='GLOBAL',
                                     mirror=False,

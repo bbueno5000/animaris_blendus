@@ -1,13 +1,16 @@
+"""
+    2-Dimensional
+"""
 import bpy
 
 GENERATION = 1
-POP_SIZE = 10
 N_SURVIVORS = 4
+POP_SIZE = 10
+SUB_SPECIES = "Duo"
 
 print("render_images start")
 
 survivorsFile = open(bpy.path.abspath("//Survivors.csv"), 'r')
-
 survivorsList = []
 
 for i in range(0, N_SURVIVORS):
@@ -25,7 +28,7 @@ for i in range(1, (POP_SIZE + 1)):
 
     bpy.data.objects["Sphere"].data = bpy.data.objects["BezierCurve." + str(i)].data
 
-    bpy.context.scene.render.filepath = "//Duo 3D Population " + POP_SIZE +  " Generation " + \
+    bpy.context.scene.render.filepath = "//" + SUB_SPECIES + " 2D Population " + POP_SIZE +  " Generation " + \
                                          GENERATION + " Bezier Curve " + str(i) + ".png"
 
     bpy.ops.render.render(animation=False,
