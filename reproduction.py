@@ -1,6 +1,10 @@
 import bpy
 import random
 
+N_DIMENSIONS = 2
+N_SURVIVORS = 4
+POP_SIZE = 10
+
 print("reproduction start")
 # set horizon color
 bpy.data.worlds["World"].horizon_color = (0.55, 0.55, 0.55)
@@ -13,12 +17,13 @@ bpy.ops.mesh.primitive_plane_add(radius=100,
                                  layers=(True, False, False, False, False, False, False, False,
                                          False, False, False, False, False, False, False, False,
                                          False, False, False, False))
+
 matPlane = bpy.data.materials.new(name="Material")
 matPlane.diffuse_color = (0.6, 0.3, 0.3)
 bpy.data.objects["Plane"].data.materials.append(matPlane)
 # add survivors property
 bpy.ops.object.game_property_new(type='INT',name="survivors")
-bpy.context.active_object.game.properties["survivors"].value = 10
+bpy.context.active_object.game.properties["survivors"].value = N_SURVIVORS
 bpy.context.active_object.game.properties["survivors"].show_debug = True
 # add timer property
 bpy.ops.object.game_property_new(type='TIMER',name="timer")
@@ -49,7 +54,7 @@ bpy.ops.logic.controller_add(type='LOGIC_AND')
 # set logic bricks
 sensors["Property.001"].evaluation_type = 'PROPLESSTHAN'
 sensors["Property.001"].property = "survivors"
-sensors["Property.001"].value = "5"
+sensors["Property.001"].value = N_SURVIVORS + 1
 controllers["Python.001"].text = bpy.data.texts["genetic_exchange.py"]
 # connect logic bricks
 sensors["Property.001"].link(controllers["Python.001"])
@@ -89,9 +94,11 @@ bpy.ops.transform.rotate(value=1.5708,
                          mirror=False, proportional='DISABLED',
                          proportional_edit_falloff='SMOOTH',
                          proportional_size=1)
+
 matPlane = bpy.data.materials.new(name="Material")
 matPlane.diffuse_color = (0.3, 0.3, 0.6)
 bpy.data.objects["Plane.002"].data.materials.append(matPlane)
+
 # create extra curve to satisfy naming scheme
 bpy.ops.curve.primitive_bezier_circle_add(view_align=False,
                                           enter_editmode=False,
@@ -99,6 +106,7 @@ bpy.ops.curve.primitive_bezier_circle_add(view_align=False,
                                           layers=(True, False, False, False, False, False, False,
                                                   False, False, False, False, False, False, False,
                                                   False, False, False, False, False, False))
+
 bpy.ops.curve.primitive_bezier_curve_add(view_align=False,
                                          enter_editmode=False,
                                          location=(0, 0, -10),
@@ -109,7 +117,7 @@ bpy.ops.curve.primitive_bezier_curve_add(view_align=False,
 matObject = bpy.data.materials.new(name="Material")
 matObject.diffuse_color = (0.03, 0.03, 0.03)
 # create curves
-for i in range(1, 11):
+for i in range(1, (POP_SIZE + 1)):
     x = random.randrange(0, 200)
     y = random.randrange(-100, 100)
     z = random.randrange(0, 200)
@@ -120,6 +128,7 @@ for i in range(1, 11):
                                              layers=(True, False, False, False, False, False, False,
                                                      False, False, False, False, False, False, False,
                                                      False, False, False, False, False, False))
+
     bpy.ops.curve.subdivide()
 
     file = open(bpy.path.abspath("//" + str(i) + ".txt"), 'r')

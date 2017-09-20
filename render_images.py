@@ -1,8 +1,8 @@
 import bpy
 
-generation = 1  # change generation
-pop_size = 10
-survivors = 4
+GENERATION = 1
+POP_SIZE = 10
+N_SURVIVORS = 4
 
 print("render_images start")
 
@@ -10,10 +10,10 @@ survivorsFile = open(bpy.path.abspath("//Survivors.csv"), 'r')
 
 survivorsList = []
 
-for i in range(0, survivors):
+for i in range(0, N_SURVIVORS):
      survivorsList.append(survivorsFile.readline().strip())
 
-for i in range(1, (pop_size + 1)):
+for i in range(1, (POP_SIZE + 1)):
 
     name = "Beziercurve." + str(i)
 
@@ -25,8 +25,8 @@ for i in range(1, (pop_size + 1)):
 
     bpy.data.objects["Sphere"].data = bpy.data.objects["Beziercurve." + str(i)].data
 
-    bpy.context.scene.render.filepath = "//Duo 3D Population " + pop_size +  " Generation " + \
-                                         generation + " Beziercurve " + str(i) + ".png"
+    bpy.context.scene.render.filepath = "//Duo 3D Population " + POP_SIZE +  " Generation " + \
+                                         GENERATION + " Beziercurve " + str(i) + ".png"
 
     bpy.ops.render.render(animation=False,
                           write_still=True,
