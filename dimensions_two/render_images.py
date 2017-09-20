@@ -10,7 +10,7 @@ SUB_SPECIES = "Duo"
 
 print("render_images start")
 
-survivorsFile = open(bpy.path.abspath("//Survivors.csv"), 'r')
+survivorsFile = open(bpy.path.abspath("//survivors.csv"), 'r')
 survivorsList = []
 
 for i in range(0, N_SURVIVORS):
