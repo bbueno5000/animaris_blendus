@@ -136,14 +136,29 @@ for i in range(1, (POP_SIZE + 1)):
     for j in range(0, 3):
         bpy.ops.object.game_property_new(type='INT',name="geneX" + str(j))
         bpy.ops.object.game_property_new(type='INT',name="geneY" + str(j))
+
+        if N_DIMENSIONS == 3:
+            bpy.ops.object.game_property_new(type='INT',name="geneZ" + str(j))
+
         # set property values
         x = int(file.readline())
         y = int(file.readline())
+
+        if N_DIMENSIONS == 3:
+            z = int(file.readline())
+        else:
+            z = 0
+
         bpy.context.active_object.game.properties["geneX" + str(j)].value = x
         bpy.context.active_object.game.properties["geneY" + str(j)].value = y
+
+        if N_DIMENSIONS == 3:
+             bpy.context.active_object.game.properties["geneZ" + str(j)].value = z
+
         # set coordinate values for bezier points
         bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = True
-        bpy.ops.transform.translate(value=(x, y, 0),
+
+        bpy.ops.transform.translate(value=(x, y, z),
                                     constraint_axis=(True, True, False),
                                     constraint_orientation='GLOBAL',
                                     mirror=False,

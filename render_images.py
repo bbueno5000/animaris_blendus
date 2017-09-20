@@ -15,7 +15,7 @@ for i in range(0, N_SURVIVORS):
 
 for i in range(1, (POP_SIZE + 1)):
 
-    name = "Beziercurve." + str(i)
+    name = "BezierCurve." + str(i)
 
     if name in survivorsList:
         bpy.data.worlds["World"].horizon_color = (0.7, 0.7, 0.7)
@@ -23,10 +23,10 @@ for i in range(1, (POP_SIZE + 1)):
         bpy.data.worlds["World"].horizon_color = (0.0, 0.0, 0.0)
 
 
-    bpy.data.objects["Sphere"].data = bpy.data.objects["Beziercurve." + str(i)].data
+    bpy.data.objects["Sphere"].data = bpy.data.objects["BezierCurve." + str(i)].data
 
     bpy.context.scene.render.filepath = "//Duo 3D Population " + POP_SIZE +  " Generation " + \
-                                         GENERATION + " Beziercurve " + str(i) + ".png"
+                                         GENERATION + " Bezier Curve " + str(i) + ".png"
 
     bpy.ops.render.render(animation=False,
                           write_still=True,
