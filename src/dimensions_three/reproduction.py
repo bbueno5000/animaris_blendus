@@ -1,15 +1,17 @@
-"""
-    3-Dimensional
-"""
-import bpy
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
+""" 3-Dimensional"""
+
 import random
+import bpy
 
 N_DIVISIONS = 3  # three for A. Blendus-Duo, four for A. Blendus-Tres
 N_SURVIVORS = 4
 POP_SIZE = 10
 
 print("reproduction start")
-
 # set horizon color
 bpy.data.worlds["World"].horizon_color = (0.55, 0.55, 0.55)
 bpy.context.scene.game_settings.physics_gravity = 0

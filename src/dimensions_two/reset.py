@@ -1,8 +1,11 @@
-"""
-    2-Dimensional
-"""
-import bpy
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
+""" 2-Dimensional"""
+
 import random
+import bpy
 
 print("reset start")
 

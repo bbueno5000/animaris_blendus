@@ -1,5 +1,9 @@
-import bge
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
 import random
+import bpy
 
 GENERATION = 1
 N_SURVIVORS = 4

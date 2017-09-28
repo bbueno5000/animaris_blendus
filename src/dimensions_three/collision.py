@@ -1,6 +1,9 @@
-"""
-    3-Dimensional
-"""
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
+""" 3-Dimensional"""
+
 import bge
 
 scene = bge.logic.getCurrentScene()
@@ -20,4 +23,4 @@ if own.sensors["Ray"].positive and own.sensors["Collision"].positive:
         print(own.sensors["Collision"].hitObject.name)
         own.sensors["Collision"].hitObject.endObject()
         plane["survivors"] -= 1
-        print("collision"
+        print("collision")

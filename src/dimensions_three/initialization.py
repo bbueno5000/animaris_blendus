@@ -1,15 +1,17 @@
-"""
-    3-Dimensional
-"""
-import bpy
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
+""" 3-Dimensional"""
+
 import random
+import bpy
 
 N_DIVISIONS = 3  # three for A. Blendus-Duo, four for A. Blendus-Tres
 N_SURVIVORS = 9
 POP_SIZE = 20
 
 print("initialization start")
-
 # set horizon color
 bpy.data.worlds["World"].horizon_color = (0.25, 0.25, 0.25)
 bpy.context.scene.game_settings.physics_gravity = 0
@@ -238,5 +240,4 @@ for i in range(1, (POP_SIZE + 1)):
 # delete extra curve
 bpy.data.objects["BezierCurve"].select = True
 bpy.ops.object.delete(use_global=False)
-
 print("initialization end")

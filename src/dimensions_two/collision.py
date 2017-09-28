@@ -1,6 +1,9 @@
-"""
-    2-Dimensional
-"""
+# MIT License
+#
+# Copyright (c) 2017 Benjamin Bueno (bbueno5000)
+
+""" 2-Dimensional"""
+
 import bge
 
 scene = bge.logic.getCurrentScene()
