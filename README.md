@@ -12,11 +12,13 @@ Feel free to email me ([Ben B](https://github.com/bbueno5000)) with any question
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/bbueno5000/animaris_blendus/blob/master/LICENSE) file for details
 
-## Prerequisites
+## Getting Started
+
+### Prerequisites
 
 [Blender 3D](https://www.blender.org/)
 
-### Getting Started
+### Instructions
 
 These python scripts run in Blender 3D.
 
