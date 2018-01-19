@@ -1,4 +1,4 @@
-# MIT License
+# MIT Licens
 #
 # Copyright (c) 2017 Benjamin Bueno (bbueno5000)
 
