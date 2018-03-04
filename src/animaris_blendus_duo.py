@@ -1,41 +1,35 @@
-from animaris_blendus import AnimarisBlendus
 import bpy
 import bge
-import random
-
-
-GENERATION = 1
-N_SURVIVORS = 9
-POP_SIZE = 10
-N_DIVISIONS = 3  # three for A. Blendus-Duo, four for A. Blendus-Tres
-SUB_SPECIES = "Duo"
+from random import randrange
+from animaris_blendus import AnimarisBlendus
 
 
 class AnimarisBlendusDuo(AnimarisBlendus):
 
     def __init__(self):
+        self.sub_species = "Duo"
         print("initialization start")
         # set horizon color
         bpy.data.worlds["World"].horizon_color = (0.25, 0.25, 0.25)
         bpy.context.scene.game_settings.physics_gravity = 0
         # construct plane
         bpy.ops.mesh.primitive_plane_add(radius=100,
-                                        view_align=False,
-                                        enter_editmode=False,
-                                        location=(100, 0, 0),
-                                        layers=(True, False, False, False, False, False, False,
-                                                False, False, False, False, False, False, False,
-                                                False, False, False, False, False, False))
-
-        matPlane = bpy.data.materials.new(name="Material")
-        matPlane.diffuse_color = (0.6, 0.3, 0.3)
-        bpy.data.objects["Plane"].data.materials.append(matPlane)
+                                         view_align=False,
+                                         enter_editmode=False,
+                                         location=(100, 0, 0),
+                                         layers=(True, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False))
+        mat_plane = bpy.data.materials.new(name="Material")
+        mat_plane.diffuse_color = (0.6, 0.3, 0.3)
+        bpy.data.objects["Plane"].data.materials.append(mat_plane)
         # add survivors property
-        bpy.ops.object.game_property_new(type='INT',name="survivors")
-        bpy.context.active_object.game.properties["survivors"].value = POP_SIZE
+        bpy.ops.object.game_property_new(type='INT', name="survivors")
+        bpy.context.active_object.game.properties["survivors"].value = self.pop_size
         bpy.context.active_object.game.properties["survivors"].show_debug = True
         # add timer property
-        bpy.ops.object.game_property_new(type='INT',name='timer')
+        bpy.ops.object.game_property_new(type='INT', name='timer')
         bpy.context.active_object.game.properties["timer"].show_debug = True
         # access logic bricks
         sensors =  bpy.context.object.game.sensors
@@ -63,50 +57,49 @@ class AnimarisBlendusDuo(AnimarisBlendus):
         # set logic bricks
         sensors["Property.001"].evaluation_type = 'PROPLESSTHAN'
         sensors["Property.001"].property = "survivors"
-        sensors["Property.001"].value = N_SURVIVORS + 1
+        sensors["Property.001"].value = self.n_survivors + 1
         controllers["Python.001"].text = bpy.data.texts["genetic_exchange.py"]
         # connect logic bricks
         sensors["Property.001"].link(controllers["Python.001"])
         sensors["Property.001"].link(controllers["And.001"])
         actuators["Game"].link(controllers["And.001"])
-
         # create extra curve to satisfy naming scheme
         bpy.ops.curve.primitive_bezier_circle_add(view_align=False,
-                                                enter_editmode=False,
-                                                location=(0, 0, 0),
-                                                layers=(True, False, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False, False, False,
-                                                        False, False, False, False))
-
+                                                  enter_editmode=False,
+                                                  location=(0, 0, 0),
+                                                  layers=(True, False, False, False, False,
+                                                          False, False, False, False, False,
+                                                          False, False, False, False, False,
+                                                          False, False, False, False, False))
         bpy.ops.curve.primitive_bezier_curve_add(view_align=False,
-                                                enter_editmode=False,
-                                                location=(0, 0, -10),
-                                                layers=(True, False, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False, False, False,
-                                                        False, False, False, False))
+                                                 enter_editmode=False,
+                                                 location=(0, 0, -10),
+                                                 layers=(True, False, False, False, False,
+                                                         False, False, False, False, False,
+                                                         False, False, False, False, False,
+                                                         False, False, False, False, False))
         # create object material
-        matObject = bpy.data.materials.new(name="Material")
-        matObject.diffuse_color = (0.03, 0.03, 0.03)
+        mat_object = bpy.data.materials.new(name="Material")
+        mat_object.diffuse_color = (0.03, 0.03, 0.03)
         # create curves
-        for i in range(1, (POP_SIZE + 1)):
-            x = random.randrange(-100, 100)
-            y = random.randrange(-100, 100)
+        for i in range(1, (self.pop_size + 1)):
+            x = randrange(-100, 100)
+            y = randrange(-100, 100)
             bpy.ops.curve.primitive_bezier_curve_add(radius=15,
-                                                    view_align=False,
-                                                    enter_editmode=True,
-                                                    location=(x, y, 0),
-                                                    layers=(True, False, False, False, False, False, False, False,
-                                                            False, False, False, False, False, False, False, False,
-                                                            False, False, False, False))
-
-            bpy.ops.curve.subdivide(number_cuts=(N_DIVISIONS - 2))
-
-            for j in range(0, N_DIVISIONS):
-                bpy.ops.object.game_property_new(type='INT',name="geneX" + str(j))
-                bpy.ops.object.game_property_new(type='INT',name="geneY" + str(j))
+                                                     view_align=False,
+                                                     enter_editmode=True,
+                                                     location=(x, y, 0),
+                                                     layers=(True, False, False, False, False,
+                                                             False, False, False, False, False,
+                                                             False, False, False, False, False,
+                                                             False, False, False, False, False))
+            bpy.ops.curve.subdivide(number_cuts=(self.n_divisions - 2))
+            for j in range(self.n_divisions):
+                bpy.ops.object.game_property_new(type='INT', name="geneX" + str(j))
+                bpy.ops.object.game_property_new(type='INT', name="geneY" + str(j))
                 # set property values
-                x = random.randrange(-20, 20)
-                y = random.randrange(-20, 20)
+                x = randrange(-20, 20)
+                y = randrange(-20, 20)
                 bpy.context.active_object.game.properties['geneX' + str(j)].value = x
                 bpy.context.active_object.game.properties['geneY' + str(j)].value = y
                 # set coordinate values for bezier points
@@ -118,15 +111,13 @@ class AnimarisBlendusDuo(AnimarisBlendus):
                                             proportional='DISABLED',
                                             proportional_edit_falloff='SMOOTH',
                                             proportional_size=1)
-
                 bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = False
-
             bpy.ops.object.mode_set(mode='OBJECT')
             bpy.context.active_object.name = "BezierCurve." + str(i)
             bpy.context.object.data.bevel_object = bpy.data.objects["BezierCircle"]
             bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS')
             bpy.ops.object.convert(target='MESH')
-            bpy.context.active_object.data.materials.append(matObject)
+            bpy.context.active_object.data.materials.append(mat_object)
             bpy.context.object.game.physics_type = 'DYNAMIC'
             bpy.context.object.game.use_collision_bounds = True
             bpy.context.object.game.collision_bounds_type = 'CONVEX_HULL'
@@ -136,15 +127,15 @@ class AnimarisBlendusDuo(AnimarisBlendus):
             controllers =  bpy.context.object.game.controllers
             actuators =  bpy.context.object.game.actuators
             # add logic bricks
-            for j in range(0, 12):
+            for j in range(12):
                 bpy.ops.logic.sensor_add(type='RANDOM')
                 bpy.ops.logic.controller_add(type='LOGIC_AND')
                 bpy.ops.logic.actuator_add(type='MOTION')
             # set logic bricks
-            for j in range(0, 8):
+            for j in range(8):
                 sensors[j].use_pulse_true_level = True
-                sensors[j].tick_skip = random.randrange(0, 100)
-                sensors[j].seed = random.randrange(0, 100)
+                sensors[j].tick_skip = randrange(0, 100)
+                sensors[j].seed = randrange(0, 100)
             # linear velocity
             actuators["Motion"].linear_velocity[0] = -25
             actuators["Motion.001"].linear_velocity[0] = 25
@@ -156,7 +147,7 @@ class AnimarisBlendusDuo(AnimarisBlendus):
             actuators["Motion.006"].angular_velocity[1] = -10
             actuators["Motion.007"].angular_velocity[1] = 10
             # connect logic bricks
-            for j in range(0, 8):
+            for j in range(8):
                 sensors[j].link(controllers[j])
                 actuators[j].link(controllers[j])
             # add logic bricks
@@ -195,7 +186,7 @@ class AnimarisBlendusDuo(AnimarisBlendus):
         bpy.ops.object.delete(use_global=False)
         print("initialization end")
 
-   def collision(self):
+    def collision(self):
         scene = bge.logic.getCurrentScene()
         plane = scene.objects["Plane"]
         cont = bge.logic.getCurrentController()
@@ -220,19 +211,19 @@ class AnimarisBlendusDuo(AnimarisBlendus):
         bpy.context.scene.game_settings.physics_gravity = 0
         # construct plane
         bpy.ops.mesh.primitive_plane_add(radius=100,
-                                        view_align=False,
-                                        enter_editmode=False,
-                                        location=(100, 0, 0),
-                                        layers=(True, False, False, False, False, False, False, False,
-                                                False, False, False, False, False, False, False, False,
-                                                False, False, False, False))
-
-        matPlane = bpy.data.materials.new(name="Material")
-        matPlane.diffuse_color = (0.6, 0.3, 0.3)
-        bpy.data.objects["Plane"].data.materials.append(matPlane)
+                                         view_align=False,
+                                         enter_editmode=False,
+                                         location=(100, 0, 0),
+                                         layers=(True, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False))
+        mat_plane = bpy.data.materials.new(name="Material")
+        mat_plane.diffuse_color = (0.6, 0.3, 0.3)
+        bpy.data.objects["Plane"].data.materials.append(mat_plane)
         # add survivors property
         bpy.ops.object.game_property_new(type='INT',name="survivors")
-        bpy.context.active_object.game.properties["survivors"].value = N_SURVIVORS
+        bpy.context.active_object.game.properties["survivors"].value = self.n_survivors
         bpy.context.active_object.game.properties["survivors"].show_debug = True
         # add timer property
         bpy.ops.object.game_property_new(type='TIMER',name="timer")
@@ -263,88 +254,84 @@ class AnimarisBlendusDuo(AnimarisBlendus):
         # set logic bricks
         sensors["Property.001"].evaluation_type = 'PROPLESSTHAN'
         sensors["Property.001"].property = "survivors"
-        sensors["Property.001"].value = N_SURVIVORS + 1
+        sensors["Property.001"].value = self.n_divisions + 1
         controllers["Python.001"].text = bpy.data.texts["genetic_exchange.py"]
         # connect logic bricks
         sensors["Property.001"].link(controllers["Python.001"])
         sensors["Property.001"].link(controllers["And.001"])
         actuators["Game"].link(controllers["And.001"])
-
         bpy.ops.mesh.primitive_plane_add(radius=100,
-                                        view_align=False,
-                                        enter_editmode=False,
-                                        location=(0, 0, 100),
-                                        layers=(True, False, False, False, False, False, False,
-                                                False, False, False, False, False, False, False,
-                                                False, False, False, False, False, False))
+                                         view_align=False,
+                                         enter_editmode=False,
+                                         location=(0, 0, 100),
+                                         layers=(True, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False))
         bpy.ops.transform.rotate(value=1.5708,
-                                axis=(0, 1, 0),
-                                constraint_axis=(False, True, False),
-                                constraint_orientation='GLOBAL',
-                                mirror=False,
-                                proportional='DISABLED',
-                                proportional_edit_falloff='SMOOTH',
-                                proportional_size=1)
-
-        matPlane = bpy.data.materials.new(name="Material")
-        matPlane.diffuse_color = (0.3, 0.6, 0.3)
-        bpy.data.objects["Plane.001"].data.materials.append(matPlane)
-
+                                 axis=(0, 1, 0),
+                                 constraint_axis=(False, True, False),
+                                 constraint_orientation='GLOBAL',
+                                 mirror=False,
+                                 proportional='DISABLED',
+                                 proportional_edit_falloff='SMOOTH',
+                                 proportional_size=1)
+        mat_plane = bpy.data.materials.new(name="Material")
+        mat_plane.diffuse_color = (0.3, 0.6, 0.3)
+        bpy.data.objects["Plane.001"].data.materials.append(mat_plane)
         bpy.ops.mesh.primitive_plane_add(radius=100,
-                                        view_align=False,
-                                        enter_editmode=False,
-                                        location=(100, 100, 100),
-                                        layers=(True, False, False, False, False, False, False,
-                                                False, False, False, False, False, False, False,
-                                                False, False, False, False, False, False))
+                                         view_align=False,
+                                         enter_editmode=False,
+                                         location=(100, 100, 100),
+                                         layers=(True, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False,
+                                                 False, False, False, False, False))
         bpy.ops.transform.rotate(value=1.5708,
-                                axis=(1, 0, 0),
-                                constraint_axis=(True, False, False),
-                                constraint_orientation='GLOBAL',
-                                mirror=False, proportional='DISABLED',
-                                proportional_edit_falloff='SMOOTH',
-                                proportional_size=1)
-
-        matPlane = bpy.data.materials.new(name="Material")
-        matPlane.diffuse_color = (0.3, 0.3, 0.6)
-        bpy.data.objects["Plane.002"].data.materials.append(matPlane)
-
+                                 axis=(1, 0, 0),
+                                 constraint_axis=(True, False, False),
+                                 constraint_orientation='GLOBAL',
+                                 mirror=False, proportional='DISABLED',
+                                 proportional_edit_falloff='SMOOTH',
+                                 proportional_size=1)
+        mat_plane = bpy.data.materials.new(name="Material")
+        mat_plane.diffuse_color = (0.3, 0.3, 0.6)
+        bpy.data.objects["Plane.002"].data.materials.append(mat_plane)
         # create extra curve to satisfy naming scheme
         bpy.ops.curve.primitive_bezier_circle_add(view_align=False,
-                                                enter_editmode=False,
-                                                location=(0, 0, 0),
-                                                layers=(True, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False))
-
+                                                  enter_editmode=False,
+                                                  location=(0, 0, 0),
+                                                  layers=(True, False, False, False, False,
+                                                          False, False, False, False, False,
+                                                          False, False, False, False, False,
+                                                          False, False, False, False, False))
         bpy.ops.curve.primitive_bezier_curve_add(view_align=False,
-                                                enter_editmode=False,
-                                                location=(0, 0, -10),
-                                                layers=(True, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False, False,
-                                                        False, False, False, False, False, False))
+                                                 enter_editmode=False,
+                                                 location=(0, 0, -10),
+                                                 layers=(True, False, False, False, False,
+                                                         False, False, False, False, False,
+                                                         False, False, False, False, False,
+                                                         False, False, False, False, False))
         # create object material
-        matObject = bpy.data.materials.new(name="Material")
-        matObject.diffuse_color = (0.03, 0.03, 0.03)
+        mat_object = bpy.data.materials.new(name="Material")
+        mat_object.diffuse_color = (0.03, 0.03, 0.03)
         # create curves
-        for i in range(1, (POP_SIZE + 1)):
-            x = random.randrange(0, 200)
-            y = random.randrange(-100, 100)
+        for i in range(1, (self.pop_size + 1)):
+            x = randrange(0, 200)
+            y = randrange(-100, 100)
             bpy.ops.curve.primitive_bezier_curve_add(radius=15,
-                                                    view_align=False,
-                                                    enter_editmode=True,
-                                                    location=(x, y, 0),
-                                                    layers=(True, False, False, False, False, False, False,
-                                                            False, False, False, False, False, False, False,
-                                                            False, False, False, False, False, False))
-
-            bpy.ops.curve.subdivide(number_cuts=(N_DIVISIONS - 2))
-
+                                                     view_align=False,
+                                                     enter_editmode=True,
+                                                     location=(x, y, 0),
+                                                     layers=(True, False, False, False, False,
+                                                             False, False, False, False, False,
+                                                             False, False, False, False, False,
+                                                             False, False, False, False, False))
+            bpy.ops.curve.subdivide(number_cuts=(self.n_divisions - 2))
             file = open(bpy.path.abspath("//" + str(i) + ".txt"), 'r')
-
-            for j in range(0, N_DIVISIONS):
-                bpy.ops.object.game_property_new(type='INT',name="geneX" + str(j))
-                bpy.ops.object.game_property_new(type='INT',name="geneY" + str(j))
+            for j in range(self.n_divisions):
+                bpy.ops.object.game_property_new(type='INT', name="geneX" + str(j))
+                bpy.ops.object.game_property_new(type='INT', name="geneY" + str(j))
                 # set property values
                 x = int(file.readline())
                 y = int(file.readline())
@@ -359,16 +346,14 @@ class AnimarisBlendusDuo(AnimarisBlendus):
                                             proportional='DISABLED',
                                             proportional_edit_falloff='SMOOTH',
                                             proportional_size=1)
-
                 bpy.context.active_object.data.splines[0].bezier_points[j].select_control_point = False
-
             file.close()
             bpy.ops.object.mode_set(mode='OBJECT')
             bpy.context.active_object.name = "BezierCurve." + str(i)
             bpy.context.object.data.bevel_object = bpy.data.objects["BezierCircle"]
             bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS')
             bpy.ops.object.convert(target='MESH')
-            bpy.context.active_object.data.materials.append(matObject)
+            bpy.context.active_object.data.materials.append(mat_object)
             bpy.context.object.game.physics_type = 'DYNAMIC'
             bpy.context.object.game.use_collision_bounds = True
             bpy.context.object.game.collision_bounds_type = 'CONVEX_HULL'
@@ -378,15 +363,15 @@ class AnimarisBlendusDuo(AnimarisBlendus):
             controllers =  bpy.context.object.game.controllers
             actuators =  bpy.context.object.game.actuators
             # add logic bricks
-            for j in range(0, 12):
+            for j in range(12):
                 bpy.ops.logic.sensor_add(type='RANDOM')
                 bpy.ops.logic.controller_add(type='LOGIC_AND')
                 bpy.ops.logic.actuator_add(type='MOTION')
             # set logic bricks
-            for j in range(0, 8):
+            for j in range(8):
                 sensors[j].use_pulse_true_level = True
-                sensors[j].tick_skip = random.randrange(0, 100)
-                sensors[j].seed = random.randrange(0, 100)
+                sensors[j].tick_skip = randrange(0, 100)
+                sensors[j].seed = randrange(0, 100)
             # linear velocity
             actuators["Motion"].linear_velocity[0] = -25
             actuators["Motion.001"].linear_velocity[0] = 25
@@ -398,7 +383,7 @@ class AnimarisBlendusDuo(AnimarisBlendus):
             actuators["Motion.006"].angular_velocity[1] = -10
             actuators["Motion.007"].angular_velocity[1] = 10
             # connect logic bricks
-            for j in range(0, 8):
+            for j in range(8):
                 sensors[j].link(controllers[j])
                 actuators[j].link(controllers[j])
             # add logic bricks
@@ -442,6 +427,6 @@ class AnimarisBlendusDuo(AnimarisBlendus):
         for o in bpy.data.objects:
             if o.type == 'MESH':
                 if o.name != "Plane":
-                o.location.x = random.randrange(-100, 100)
-                o.location.y = random.randrange(-100, 100)
+                    o.location.x = randrange(-100, 100)
+                    o.location.y = randrange(-100, 100)
         print("reset end")
