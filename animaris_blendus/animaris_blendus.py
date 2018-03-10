@@ -103,8 +103,8 @@ class AnimarisBlendus:
                                                          False, False, False, False, False))
 
         # create object material
-        mat_object = bpy.data.materials.new(name="Material")
-        mat_object.diffuse_color = (0.03, 0.03, 0.03)
+        self.mat_object = bpy.data.materials.new(name="Material")
+        self.mat_object.diffuse_color = (0.03, 0.03, 0.03)
 
     def genetic_exchange(self):
         print("genetic_exchange start")

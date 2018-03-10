@@ -28,6 +28,7 @@ from random import randrange
 class AnimarisBlendusTres(AnimarisBlendus):
 
     def __init__(self):
+        super(AnimarisBlendusTres, self).__init__()
         self.n_divisions = 4
         self.sub_species = "Tres"
         bpy.ops.mesh.primitive_plane_add(radius=100,
@@ -105,7 +106,7 @@ class AnimarisBlendusTres(AnimarisBlendus):
             bpy.context.object.data.bevel_object = bpy.data.objects["BezierCircle"]
             bpy.ops.object.origin_set(type='ORIGIN_CENTER_OF_MASS')
             bpy.ops.object.convert(target='MESH')
-            bpy.context.active_object.data.materials.append(mat_object)
+            bpy.context.active_object.data.materials.append(self.mat_object)
             bpy.context.object.game.physics_type = 'DYNAMIC'
             bpy.context.object.game.use_collision_bounds = True
             bpy.context.object.game.collision_bounds_type = 'CONVEX_HULL'
